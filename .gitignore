@@ -39,3 +39,4 @@ node_modules/
 dist/
 build/
 test_run.py
+run_test.py
