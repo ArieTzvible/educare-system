@@ -8,12 +8,7 @@ class ClassGroup(db.Model):
     class_code = db.Column(db.String(50), unique=True, nullable=False)  # למשל: A1, B2
     class_name = db.Column(db.String(100), nullable=False)  # למשל: כיתה א' 1
 
-    # קשרים (Relationships) - משתמשים במחרוזות כדי למנוע קריסה של פייתון
-
-    # קשר לתלמידים בכיתה (אחד לרבים)
     students = db.relationship('Student', backref='class_group', lazy=True)
-
-    # קשר לקבצים של הכיתה (אחד לרבים)
     files = db.relationship('FileRecord', backref='class_group', lazy=True)
 
     # תשתית עתידית: קשר למערכת שעות (למשל טבלת Schedule)
