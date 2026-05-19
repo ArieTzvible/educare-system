@@ -83,7 +83,6 @@ def get_all_students_logic():
                     "identity_num": student.identity_num,
                     "full_name": student.full_name,
                     "personal_phone": student.personal_phone,
-                    "status": student.status,
                     "class_name": student.class_group.class_name if student.class_group else "ללא כיתה"
                 })
 
@@ -97,3 +96,53 @@ def get_all_students_logic():
                 "status": "error",
                 "message": f"שגיאה בשליפת הנתונים: {str(e)}"
             }), 500
+
+
+def get_students_by_search_logic():
+    """Fetches students with dynamic filtering and dynamically includes the filtered fields in the response."""
+    try:
+        # Retrieving the parameters
+        query_params = request.args.to_dict()
+        query = Student.query
+        valid_filters = []
+
+        # Building a dynamic query
+        for key, value in query_params.items():
+            if hasattr(Student, key):
+                model_attr = getattr(Student, key)
+                query = query.filter(model_attr == value)
+                valid_filters.append(key)
+
+        # Running the query against the database
+        students = query.order_by(Student.full_name.asc()).all()
+
+        # JSON construction
+        students_list = []
+        for student in students:
+            # הנתונים הבסיסיים שתמיד יופיעו
+            student_data = {
+                "id": student.id,
+                "identity_num": student.identity_num,
+                "full_name": student.full_name,
+                "personal_phone": student.personal_phone,
+                "status": student.status,
+                "class_name": student.class_group.class_name if student.class_group else "ללא כיתה"
+            }
+
+            # Adding the fields from the request
+            for filter_field in valid_filters:
+                if filter_field != 'class_id':
+                    student_data[filter_field] = getattr(student, filter_field, None)
+
+            students_list.append(student_data)
+
+        return jsonify({
+            "status": "success",
+            "type": "dynamic_generic_search",
+            "filters_applied": query_params,
+            "count": len(students_list),
+            "data": students_list
+        }), 200
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500

@@ -28,3 +28,8 @@ def add_student_api():
 @dashboard_bp.route('/api/students', methods=['GET'])
 def get_all_students_api():
     return student_ctrl.get_all_students_logic()
+
+# Get students on request for the dashboard table
+@dashboard_bp.route('/api/students/search', methods=['GET'])
+def search_students_api():
+    return student_ctrl.get_students_by_search_logic()
