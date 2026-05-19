@@ -40,3 +40,4 @@ dist/
 build/
 test_run.py
 run_test.py
+test.http
