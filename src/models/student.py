@@ -6,6 +6,7 @@ class Student(db.Model):
 
     # --- שדות חובה וזיהוי ליבה ---
     id = db.Column(db.Integer, primary_key=True)
+    identity_num = db.Column(db.String(9), unique=True, nullable=False)
     full_name = db.Column(db.String(100), nullable=False)
     # -----------------------------
     # first_name = db.Column(db.String(100), nullable=False)
